@@ -1,5 +1,4 @@
 name: linter & jest
-# Trigger the workflow on push or pull request
 on:
   - push
   - pull_request
@@ -10,38 +9,27 @@ env:
 jobs:
   build:
 
-    # The type of machine to run the job on
     runs-on: ubuntu-latest
 
     strategy:
-      # Node versions list
       matrix:
         node-version: [16.x]
 
-    # steps:
-        # Check-out repository under GitHub workspace
-        # https://github.com/actions/checkout
-     # - uses: actions/checkout@v3
-        # Step's name
-     # - name: Use Node.js ${{ matrix.node-version }}
-        # Configures the node version used on GitHub-hosted runners
-        # https://github.com/actions/setup-node
-      #  uses: actions/setup-node@v2
-        # The Node.js version to configure
-      #  with:
-        #  node-version: ${{ matrix.node-version }}
-        #  cache: 'npm'
+   #  steps:
+    #  - uses: actions/checkout@v3
+    #  - name: Use Node.js ${{ matrix.node-version }}
+   #     uses: actions/setup-node@v2
+    #    with:
+    #      node-version: ${{ matrix.node-version }}
+    #      cache: 'npm'
      # - name: Install
-        # Install project
      #   run: make install
     #  - name: Run linter
-        # Run Linter
      #   run: make lint
     #  - name: Run test & publish code coverage
     #    uses: paambaati/codeclimate-action@v3.0.0
-        # Add Code Climate secret key
-     #   env:
-     #     CC_TEST_REPORTER_ID: d022ed21df2bb4727526adf26337b732d1f44609f7f54e112c3b3db5bd3b08eb
+    #    env:
+    #      CC_TEST_REPORTER_ID: b79078ad51c514f56df205a0887982ce0465f330a3e38506e406781a6bf6f8ca
      #   with:
       #    coverageCommand: make test-coverage
       #    debug: true
