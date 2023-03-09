@@ -1,46 +1,22 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import 'bootstrap';
-import onChange from 'on-change';
 import * as yup from 'yup';
 import i18n from 'i18next';
 import resources from './locales/index.js';
-
-const render = (state, elements) => {
-  const buildPosts = () => {
-    elements.innerHTML = '';
-    const buttons = state.companies.map();
-    elements.append(...buttons);
-  };
-
-  const buildForm = () => {};
-
-  switch (state.mode) {
-    case 'posts': {
-      const posts = buildPosts();
-      element.append(posts);
-      break;
-    }
-    case 'form': {
-      const { form, input } = buildForm();
-      element.append(form);
-      input.select();
-      break;
-    }
-    default:
-      // https://ru.hexlet.io/blog/posts/sovershennyy-kod-defolty-v-svitchah
-      throw new Error(`Unknown mode: ${state.mode}`);
-  }
-};
+import watch from './view.js';
 
 const schema = yup.string().trim().required().notOneOf();
 
 const validate = (fields) => {
   return schema.validate(fields);
-};
+}; // dorabotat
+
+const loadRss = (url, watchedState) => {};
+
+const updateRss = (watchedState) => {};
 
 export default async () => {
-  // Model
-  const defaultLanguage = 'en';
+  const defaultLanguage = 'ru';
   // каждый запуск приложения создаёт свой собственный объект i18n и работает с ним,
   // не меняя глобальный объект.
   const i18nInstance = i18n.createInstance();
@@ -50,6 +26,13 @@ export default async () => {
     resources,
   });
 
+  const elements = {
+    formEl: document.querySelector('form'),
+    inputEl: document.querySelector('input[type=url]'),
+    resetEl: document.querySelector('button'),
+  };
+
+  // MODEL
   const initialState = {
     formState: {
       state: 'filling',
@@ -60,31 +43,33 @@ export default async () => {
     //   error: null,
     // },
     posts: [],
+    feeds: [],
   };
 
-  // View
-  const elements = {
-    formEl: document.querySelector('form'),
-    inputEl: document.querySelector('input[type=url]'),
-    resetEl: document.querySelector('button'),
-  };
+  // VIEW
+  const watchedState = watch(initialState, elements, i18nInstance);
 
-  const watchedState = onChange(initialState, (path, value, previousValue) => {
-    render(watchedState, elements);
-  });
-
-  // Controller
-  formEl.addEventListener('submit', (e) => {
+  // CONTROLLER
+  elements.formEl.addEventListener('submit', (e) => {
+    // dopisat logiku
     e.preventDefault();
     const data = new FormData(e.target);
+    const url = data.get('url');
+    const existedUrls = [];
+    validate(url, existedUrls);
+
     // menyaem sostoyanie
+    // validirovat znachenie
   });
 
-  resetEl.addEventListener('click', () => {
+  elements.postsContainer.addEventListener('click', () => {
     // menyaem sostoyanie
+    // click na knopku ili ssilku => menyaem sostoyanie
   });
 
   inputEl.focus();
+
+  updateRss(watchedState);
 
   console.log('IT IS WORKING!');
 };
