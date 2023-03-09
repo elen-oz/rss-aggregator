@@ -1,5 +1,6 @@
 ### Hexlet tests and linter status:
+
 [![Actions Status](https://github.com/elen-oz/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/elen-oz/frontend-project-11/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ae988a0127b618aab399/maintainability)](https://codeclimate.com/github/elen-oz/frontend-project-11/maintainability)
 
-[Deployed project](frontend-project-11-9cjy-q0mxp2pac-elen-oz.vercel.app) 
+[Deployed project](https://frontend-project-11-9cjy-elen-oz.vercel.app/)
