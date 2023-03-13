@@ -1,10 +1,10 @@
 export default {
   translation: {
-    success: 'Канал успешно загружен',
+    success: 'RSS канал успешно загружен',
     errors: {
       default: 'Ошибка',
       url: 'Невалидный URL',
-      exist: 'Канал уже существует',
+      exist: 'Данный канал уже существует',
     },
   },
 };

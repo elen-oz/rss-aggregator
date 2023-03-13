@@ -1,16 +1,10 @@
 export default {
   translation: {
-  //   languages: {
-  //     en: 'English',
-  //     ru: 'Русский',
-  //   },
-  //   buttons: {
-  //     counter: {
-  //       count_one: '{{count}} click',
-  //       count_other: '{{count}} clicks',
-  //     },
-  //     reset: 'Reset',
-  //   },
-  // },
+    success: 'RSS feed successfully uploaded',
+    errors: {
+      default: 'Error',
+      url: 'URL not valid',
+      exist: 'This feed already exists',
+    },
   },
 };
