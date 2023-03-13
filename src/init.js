@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import 'bootstrap';
 import i18next from 'i18next';
 import { setLocale } from 'yup';
 import view from './view.js';
+import resources from './locales/index';
 
 // const state = {
 //   error: null,
@@ -30,7 +30,7 @@ export default () => {
     .view({
       lng: defaultLanguage,
       debug: true,
-      // resources,
+      resources,
     })
     .then(() => view(i18nInstance));
 
