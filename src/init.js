@@ -1,11 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import 'bootstrap';
-import * as yup from 'yup';
+import i18next from 'i18next';
+import { setLocale } from 'yup';
 import view from './view.js';
 
-const state = {
-  error: null,
-};
+// const state = {
+//   error: null,
+// };
 
 const elements = {
   rssForm: document.querySelector('.rss-form'),
@@ -13,31 +14,27 @@ const elements = {
   feedback: document.querySelector('.feedback'),
 };
 
-const feedList = [];
+// const feedList = [];
 
-export default async (url) => {
-  const schema = yup.object().shape({
-    url: yup.string().url().required(),
+export default () => {
+  const defaultLanguage = 'ru';
+
+  setLocale({
+    mixed: { default: 'errors.default', notOneOf: 'errors.exist' },
+    string: { url: 'errors.url' },
   });
 
-  schema
-    .validate({ url })
-    .then(() => {
-      if (feedList.includes(url)) {
-        state.error = 'Данный адрес уже в списке';
-      } else {
-        feedList.push(url);
-        state.urlInput.value = '';
-        state.urlInput.focus();
-      }
+  const i18nInstance = i18next.createInstance();
+
+  i18nInstance
+    .view({
+      lng: defaultLanguage,
+      debug: true,
+      // resources,
     })
-    .catch((err) => {
-      state.error = err.message;
-    });
+    .then(() => view(i18nInstance));
 
   console.log('IT IS WORKING!');
 };
 
 console.log('init is working');
-view(state, elements);
-// export default addFeed;
