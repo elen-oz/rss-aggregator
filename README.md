@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/elen-oz/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/elen-oz/frontend-project-11/actions) [![Maintainability](https://api.codeclimate.com/v1/badges/ae988a0127b618aab399/maintainability)](https://codeclimate.com/github/elen-oz/frontend-project-11/maintainability)
 
-###[Link ti the project](https://frontend-project-11-01.vercel.app/)
+[Link to the project](https://frontend-project-11-01.vercel.app/)
 
 # RSS - aggregator
 
