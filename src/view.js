@@ -1,39 +1,35 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import onChange from 'on-change';
 
-const render = (watchedState, elements, i18nInstance) => {
-  const buildPosts = () => {
-    elements.innerHTML = '';
-    const buttons = state.companies.map();
-
-    elements.append(...buttons);
-  };
-
-  const buildForm = () => i18nInstance.t('required'); // dorabotat
-
-  // dodelat view sloy -- textContent
-  switch (state.mode) {
-    case 'posts': {
-      const posts = buildPosts();
-      element.append(posts);
-      break;
+export default (state, elements) => {
+  const watchedState = onChange(state, (path) => {
+    if (path === 'error') {
+      elements.feedback.classList.add('error');
+    } else {
+      elements.feedback.classList.remove('error');
     }
-    case 'form': {
-      const { form, input } = buildForm();
-      element.append(form);
-      input.select();
-      break;
+    elements.feedback.textContent = state.error;
+    if (state.error) {
+      elements.urlInput.classList.add('invalid');
+    } else {
+      elements.urlInput.classList.remove('invalid');
     }
-    default:
-      // https://ru.hexlet.io/blog/posts/sovershennyy-kod-defolty-v-svitchah
-      throw new Error(`Unknown mode: ${state.mode}`);
-  }
-
-  const watchState = onChange(initialState, (path, value, previousValue) => {
-    render(watchedState, elements, i18nInstance);
   });
 
-  return watchState;
-};
+  elements.rssForm.addEventListener('submit', (e) => {
+    console.log('e', e);
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    console.log('formData ', formData);
+    const url = formData.get('url');
+    watchedState.urlInput = elements.urlInput;
+    console.log('watchedState.urlInput ', watchedState.urlInput);
+    watchedState.feedback = elements.feedback;
+    console.log('watchedState.feedback', watchedState.feedback);
+    watchedState.error = null;
+    watchedState.addFeed(url);
+    console.log('url ', url);
+  });
 
-export default render;
+  console.log('view is working');
+};
