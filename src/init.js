@@ -2,7 +2,7 @@
 import i18next from 'i18next';
 import { setLocale } from 'yup';
 import view from './view.js';
-import resources from './locales/index';
+import resources from './locales/index.js';
 
 // const state = {
 //   error: null,
@@ -27,12 +27,12 @@ export default () => {
   const i18nInstance = i18next.createInstance();
 
   i18nInstance
-    .view({
+    .init({
       lng: defaultLanguage,
       debug: true,
       resources,
     })
-    .then(() => view(i18nInstance));
+    .then(() => view(elements, i18nInstance));
 
   console.log('IT IS WORKING!');
 };

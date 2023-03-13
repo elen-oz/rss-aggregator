@@ -1,10 +1,8 @@
-/* eslint-disable no-return-assign */
-/* eslint-disable import/no-extraneous-dependencies */
 import { string } from 'yup';
 import onChange from 'on-change';
 import render from './render.js';
 
-export default (i18nInstance, elements) => {
+export default (elements, i18nInstance) => {
   const watchedState = onChange(
     {
       form: {

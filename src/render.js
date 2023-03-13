@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 export default (elements, i18nInstance) => (path, value) => {
-  elements.input.classList.remove('is-invalid');
+  elements.urlInput.classList.remove('is-invalid');
   elements.feedback.classList.remove('text-success', 'text-danger');
   elements.feedback.textContent = '';
 
   switch (path) {
     case 'urls':
-      elements.input.classList.remove('is-invalid');
+      elements.urlInput.classList.remove('is-invalid');
 
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
@@ -14,11 +14,11 @@ export default (elements, i18nInstance) => (path, value) => {
       break;
 
     case 'form.url':
-      elements.input.value = value;
+      elements.urlInput.value = value;
       break;
 
     case 'form.error':
-      elements.input.classList.add('is-invalid');
+      elements.urlInput.classList.add('is-invalid');
 
       elements.feedback.classList.remove('text-success');
       elements.feedback.classList.add('text-danger');
