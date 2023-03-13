@@ -1,7 +1,8 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
 import i18next from 'i18next';
 import { setLocale } from 'yup';
-import view from './view.js';
+import validate from './validate.js';
 import resources from './locales/index.js';
 
 // const state = {
@@ -32,7 +33,7 @@ export default () => {
       debug: true,
       resources,
     })
-    .then(() => view(elements, i18nInstance));
+    .then(() => validate(elements, i18nInstance));
 
   console.log('IT IS WORKING!');
 };
