@@ -1,19 +1,13 @@
 import i18next from 'i18next';
 import { setLocale } from 'yup';
-import validate from './validate.js';
+import view from './view.js';
 import resources from './locales/index.js';
-
-// const state = {
-//   error: null,
-// };
 
 const elements = {
   rssForm: document.querySelector('.rss-form'),
   urlInput: document.getElementById('url-input'),
   feedback: document.querySelector('.feedback'),
 };
-
-// const feedList = [];
 
 export default () => {
   const defaultLanguage = 'ru';
@@ -31,9 +25,7 @@ export default () => {
       debug: true,
       resources,
     })
-    .then(() => validate(elements, i18nInstance));
-
-  console.log('IT IS WORKING!');
+    .then(() => view(elements, i18nInstance));
 };
 
 console.log('init is working');
