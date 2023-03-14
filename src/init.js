@@ -2,11 +2,14 @@ import i18next from 'i18next';
 import { setLocale } from 'yup';
 import view from './view.js';
 import resources from './locales/index.js';
+// import parseRSS from './parser.js';
 
-const elements = {
-  rssForm: document.querySelector('.rss-form'),
-  urlInput: document.getElementById('url-input'),
-  feedback: document.querySelector('.feedback'),
+const initialState = {
+  form: {
+    url: null,
+    error: {},
+  },
+  urls: [],
 };
 
 export default () => {
@@ -25,7 +28,7 @@ export default () => {
       debug: true,
       resources,
     })
-    .then(() => view(elements, i18nInstance));
+    .then(() => view(i18nInstance, initialState));
 };
 
 console.log('init is working');

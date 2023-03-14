@@ -3,7 +3,13 @@
 import { string } from 'yup';
 import onChange from 'on-change';
 
-const render = (elements, i18nInstance) => (path, value) => {
+const elements = {
+  rssForm: document.querySelector('.rss-form'),
+  urlInput: document.getElementById('url-input'),
+  feedback: document.querySelector('.feedback'),
+};
+
+const render = (i18nInstance) => (path, value) => {
   elements.urlInput.classList.remove('is-invalid');
   elements.feedback.classList.remove('text-success', 'text-danger');
   elements.feedback.textContent = '';
@@ -11,7 +17,6 @@ const render = (elements, i18nInstance) => (path, value) => {
   switch (path) {
     case 'urls':
       elements.urlInput.classList.remove('is-invalid');
-
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
       elements.feedback.textContent = i18nInstance.t('success');
@@ -23,7 +28,6 @@ const render = (elements, i18nInstance) => (path, value) => {
 
     case 'form.error':
       elements.urlInput.classList.add('is-invalid');
-
       elements.feedback.classList.remove('text-success');
       elements.feedback.classList.add('text-danger');
       elements.feedback.textContent = i18nInstance.t(value.message);
@@ -34,17 +38,8 @@ const render = (elements, i18nInstance) => (path, value) => {
   }
 };
 
-export default (elements, i18nInstance) => {
-  const watchedState = onChange(
-    {
-      form: {
-        url: null,
-        error: {},
-      },
-      urls: [],
-    },
-    render(elements, i18nInstance),
-  );
+export default (i18nInstance, initialState) => {
+  const watchedState = onChange(initialState, render(i18nInstance));
 
   elements.rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -61,7 +56,7 @@ export default (elements, i18nInstance) => {
         watchedState.urls.push(watchedState.form.url);
         watchedState.form.url = null;
       })
-      .catch((error) => watchedState.form.error = error)
+      .catch((error) => (watchedState.form.error = error))
       .finally(() => elements.urlInput.focus());
   });
 };
