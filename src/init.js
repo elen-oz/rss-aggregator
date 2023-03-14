@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/no-extraneous-dependencies */
 import i18next from 'i18next';
 import { setLocale } from 'yup';
 import validate from './validate.js';

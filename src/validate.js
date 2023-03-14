@@ -1,4 +1,3 @@
-/* eslint-disable no-return-assign */
 import { string } from 'yup';
 import onChange from 'on-change';
 import view from './view.js';
@@ -30,7 +29,8 @@ export default (elements, i18nInstance) => {
         watchedState.urls.push(watchedState.form.url);
         watchedState.form.url = null;
       })
-      .catch((error) => (watchedState.form.error = error))
+      // eslint-disable-next-line no-return-assign
+      .catch((error) => watchedState.form.error = error)
       .finally(() => elements.urlInput.focus());
   });
 };

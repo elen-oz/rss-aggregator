@@ -6,17 +6,17 @@
 
 # RSS - aggregator
 
-[RSS](https://ru.wikipedia.org/wiki/RSS) – специализированный формат, предназначенный для описания лент новостей, анонсов статей и других материалов. Это наиболее простой способ для сайтов (обычно, блогов) дать возможность пользователям подписываться на изменения. Для этого используются специальные сервисы, называемые RSS-агрегаторами. Эти сервисы умеют опрашивать RSS-ленты сайтов на наличие новых постов и показывают их в удобном виде, отмечая прочитанное и так далее.
+[RSS](https://ru.wikipedia.org/wiki/RSS) – a specialised format designed to describe news feeds, article announcements and other content. This is the easiest way for websites (usually blogs) to allow users to subscribe for changes. Special services called RSS-aggregators are used for this purpose. These services know how to poll sites' RSS feeds for new posts and display them in a convenient way, marking what has been read and so on.
 
-## Установка
+## Installation
 ```sh
 make install
 ```
-## Запуск локального сервера
+## Running a local server
 ```sh
 make develop
 ```
-## Сборка проекта для продакшена
+## Building the project for production
 ```sh
 make build
 ```
