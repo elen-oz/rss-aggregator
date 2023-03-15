@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import i18next from 'i18next';
 import axios from 'axios';
@@ -15,15 +16,25 @@ const downloadRSS = (url) => {
   workingUrl.searchParams.set('url', url);
 
   return axios.get(workingUrl);
+
+  // fetch(
+  //   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
+  //     'https://wikipedia.org',
+  //   )}`,
+  // )
+  //   .then((response) => {
+  //     console.log('----------', response.url);
+  //     if (response.ok) return response.url;
+  //     throw new Error('Network response was not ok.');
+  //   });
 };
 
-const getRSSContents = (url) =>
-  downloadRSS(url)
-    .catch(() => Promise.reject(new Error('networkError')))
-    .then((response) => {
-      const responseData = response.data.contents;
-      return Promise.resolve(responseData);
-    });
+const getRSSContents = (url) => downloadRSS(url)
+  .catch(() => Promise.reject(new Error('networkError')))
+  .then((response) => {
+    const responseData = response.data.contents;
+    return Promise.resolve(responseData);
+  });
 
 const buildPosts = (feedId, items, state) => {
   const posts = items.map((item) => ({
@@ -32,6 +43,30 @@ const buildPosts = (feedId, items, state) => {
     ...item,
   }));
   state.posts = posts.concat(state.posts);
+};
+
+const updatePosts = (feedId, state, timeout = 5000) => {
+  const feed = state.feeds.find(({ id }) => feedId === id);
+
+  const cb = () => getRSSContents(feed.link)
+    .then(parseRSS)
+    .then((parsedRSS) => {
+      const postsUrls = state.posts
+        .filter((post) => feedId === post.feedId)
+        .map(({ link }) => link);
+      const newItems = parsedRSS.items.filter(
+        ({ link }) => !postsUrls.includes(link),
+      );
+
+      if (newItems.length > 0) {
+        buildPosts(feedId, newItems, state);
+      }
+    })
+    .finally(() => {
+      setTimeout(cb, timeout);
+    });
+
+  setTimeout(cb, timeout);
 };
 
 export default () => {
@@ -66,7 +101,7 @@ export default () => {
 
   const state = onChange(
     initialState,
-    render(elements, initialState, i18nInstance)
+    render(elements, initialState, i18nInstance),
   );
 
   i18nInstance
@@ -103,6 +138,8 @@ export default () => {
 
             state.feeds.push(feed);
             buildPosts(feedId, parsedRSS.items, state);
+            updatePosts(feedId, state);
+
             state.form.url = '';
           })
           .catch((error) => {

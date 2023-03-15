@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const buildElement = (tagName, options = {}) => {
   const element = document.createElement(tagName);
   const { style, textContent } = options;
@@ -36,7 +37,7 @@ const buildContainer = (title, listElems) => {
   return cardBorder;
 };
 
-const handleFormState = (elements, formState, i18nInstance) => {
+const renderFormState = (elements, formState, i18nInstance) => {
   switch (formState) {
     case 'filling':
       elements.submit.disabled = false;
@@ -54,7 +55,7 @@ const handleFormState = (elements, formState, i18nInstance) => {
   }
 };
 
-const handleErrors = (elements, error, i18nInstance) => {
+const renderErrors = (elements, error, i18nInstance) => {
   elements.feedback.classList.remove('text-success');
   elements.feedback.classList.add('text-danger');
 
@@ -69,7 +70,7 @@ const handleErrors = (elements, error, i18nInstance) => {
   elements.input.focus();
 };
 
-const handleFeeds = (container, feeds, i18nInstance) => {
+const renderFeeds = (container, feeds, i18nInstance) => {
   const listElems = feeds.map(({ title, description }) => {
     const listElem = buildElement('li', {
       style: ['list-group-item', 'border-0', 'border-end-0'],
@@ -96,7 +97,7 @@ const handleFeeds = (container, feeds, i18nInstance) => {
   container.replaceChildren(feedsContainer);
 };
 
-const handlePosts = (container, posts, i18nInstance) => {
+const renderPosts = (container, posts, i18nInstance) => {
   const listElems = posts.map(({ id, title, link }) => {
     const listElem = buildElement('li', {
       style: [
@@ -146,22 +147,22 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'form.state':
-      handleFormState(elements, value, i18nInstance);
+      renderFormState(elements, value, i18nInstance);
       break;
 
     case 'form.error':
-      handleErrors(elements, value, i18nInstance);
+      renderErrors(elements, value, i18nInstance);
       break;
 
     case 'feeds':
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
       elements.feedback.textContent = i18nInstance.t('success');
-      handleFeeds(elements.feeds, value, i18nInstance);
+      renderFeeds(elements.feeds, value, i18nInstance);
       break;
 
     case 'posts':
-      handlePosts(elements.posts, value, i18nInstance);
+      renderPosts(elements.posts, value, i18nInstance);
       break;
 
     default:
