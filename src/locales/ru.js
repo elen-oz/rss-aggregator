@@ -4,7 +4,7 @@ export default {
       submit: 'Добавить',
       loading: 'Подождите',
     },
-    feeds: 'Фиды',
+    feeds: 'Каналы',
     posts: 'Посты',
     preview: 'Просмотр',
     success: 'RSS успешно загружен',

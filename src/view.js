@@ -21,8 +21,13 @@ const buildElement = (tagName, options = {}) => {
 const buildContainer = (title, listElems) => {
   const cardBorder = buildElement('div', { style: ['card', 'border-0'] });
   const cardBody = buildElement('div', { style: 'card-body' });
-  const cardTitle = buildElement('h2', { style: ['card-title', 'h4'], textContent: title });
-  const list = buildElement('ul', { style: ['list-group', 'border-0', 'rounded-0'] });
+  const cardTitle = buildElement('h2', {
+    style: ['card-title', 'h4'],
+    textContent: title,
+  });
+  const list = buildElement('ul', {
+    style: ['list-group', 'list-group-flush', 'border-0', 'rounded-0'],
+  });
 
   list.append(...listElems);
   cardBody.append(cardTitle);
@@ -66,9 +71,14 @@ const handleErrors = (elements, error, i18nInstance) => {
 
 const handleFeeds = (container, feeds, i18nInstance) => {
   const listElems = feeds.map(({ title, description }) => {
-    const listElem = buildElement('li', { style: ['list-group-item', 'border-0', 'border-end-0'] });
+    const listElem = buildElement('li', {
+      style: ['list-group-item', 'border-0', 'border-end-0'],
+    });
 
-    const titleElem = buildElement('h3', { style: ['h6', 'm-0'], textContent: title });
+    const titleElem = buildElement('h3', {
+      style: ['h6', 'm-0'],
+      textContent: title,
+    });
 
     const descriptionElem = buildElement('p', {
       style: ['m-0', 'small', 'text-black-50'],
@@ -89,10 +99,19 @@ const handleFeeds = (container, feeds, i18nInstance) => {
 const handlePosts = (container, posts, i18nInstance) => {
   const listElems = posts.map(({ id, title, link }) => {
     const listElem = buildElement('li', {
-      style: ['list-group-item', 'd-flex', 'justify-content-between', 'align-items-baseline', 'border-end-g'],
+      style: [
+        'list-group-item',
+        'd-flex',
+        'justify-content-between',
+        'align-items-baseline',
+        'border-end-g',
+      ],
     });
 
-    const linkElem = buildElement('a', { style: 'fw-bold', textContent: title });
+    const linkElem = buildElement('a', {
+      style: 'fw-bold',
+      textContent: title,
+    });
 
     linkElem.href = link;
     linkElem.target = '_blank';
