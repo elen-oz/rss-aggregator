@@ -1,10 +1,20 @@
 export default {
   translation: {
-    success: 'RSS feed successfully uploaded',
+    form: {
+      submit: 'В добавок',
+      loading: 'Обождите',
+    },
+    feeds: 'Источники',
+    posts: 'Вести',
+    preview: 'Глянуть',
+    success: 'Выполнили, как изволили',
+
     errors: {
-      default: 'Error',
-      url: 'URL not valid',
-      exist: 'This feed already exists',
+      default: 'Накладка какая-то',
+      url: 'Оплошность в шифре',
+      exist: 'Оный источник нонче бытует уже',
+      noRSS: 'Оный источник не на ходу',
+      networkError: 'Ляпус с сетью. Опробуйте сызнова',
     },
   },
 };

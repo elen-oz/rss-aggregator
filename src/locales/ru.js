@@ -1,10 +1,20 @@
 export default {
   translation: {
-    success: 'RSS канал успешно загружен',
+    form: {
+      submit: 'Добавить',
+      loading: 'Подождите',
+    },
+    feeds: 'Фиды',
+    posts: 'Посты',
+    preview: 'Просмотр',
+    success: 'RSS успешно загружен',
+
     errors: {
-      default: 'Ошибка',
-      url: 'Невалидный URL',
-      exist: 'Данный канал уже существует',
+      default: 'Неверные данные',
+      url: 'Ссылка должна быть валидным URL',
+      exist: 'RSS уже существует',
+      noRSS: 'Ресурс не содержит валидный RSS',
+      networkError: 'Проблемы сети. Попробуйте снова',
     },
   },
 };

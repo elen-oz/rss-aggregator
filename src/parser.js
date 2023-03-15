@@ -1,25 +1,32 @@
-// Parse RSS feed and generate feed and post identifiers
-// function parseRSS(xmlString) {
-//   const parser = new DOMParser();
-//   const xml = parser.parseFromString(xmlString, 'application/xml');
+const domParser = new DOMParser();
 
-//   const feedTitle = xml.querySelector('channel > title').textContent;
-//   const feedDescription = xml.querySelector('channel > description').textContent;
+export default (responseData) => {
+  const xmlDocument = domParser.parseFromString(responseData, 'text/xml');
+  const rootTagName = xmlDocument.documentElement.tagName.toLowerCase();
 
-//   const postElements = xml.querySelectorAll('item');
-//   const posts = [];
-//   postElements.forEach((postElement, index) => {
-//     const postTitle = postElement.querySelector('title').textContent;
-//     const postDescription = postElement.querySelector('description').textContent;
-//     const postId = `post-${index}`;
-//     posts.push({ id: postId, title: postTitle, description: postDescription });
-//   });
+  if (rootTagName !== 'rss') {
+    return Promise.reject(new Error('noRSS'));
+  }
 
-//   const feedId = `feed-${Date.now()}`;
-//   const feed = {
-//     id: feedId, title: feedTitle, description: feedDescription, posts,
-//   };
-//   return feed;
-// }
+  const channel = xmlDocument.querySelector('channel');
+  const channelTitle = xmlDocument.querySelector('channel title').textContent;
+  const channelDescription = xmlDocument.querySelector('channel description').textContent;
 
-// export default parseRSS;
+  const itemElements = channel.getElementsByTagName('item');
+
+  const items = [...itemElements].map((item) => {
+    const title = item.querySelector('title').textContent;
+    const description = item.querySelector('description').textContent;
+    const link = item.querySelector('channel link').textContent;
+
+    return { title, description, link };
+  });
+
+  const parsedData = {
+    title: channelTitle,
+    description: channelDescription,
+    items,
+  };
+
+  return Promise.resolve(parsedData);
+};

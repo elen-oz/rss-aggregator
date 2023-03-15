@@ -1,62 +1,151 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-return-assign */
-import { string } from 'yup';
-import onChange from 'on-change';
+const buildElement = (tagName, options = {}) => {
+  const element = document.createElement(tagName);
+  const { style, textContent } = options;
 
-const elements = {
-  rssForm: document.querySelector('.rss-form'),
-  urlInput: document.getElementById('url-input'),
-  feedback: document.querySelector('.feedback'),
+  if (style) {
+    if (Array.isArray(style) && style.length > 0) {
+      element.classList.add(...style);
+    }
+    if (typeof style === 'string') {
+      element.classList.add(style);
+    }
+  }
+
+  if (textContent) {
+    element.textContent = textContent;
+  }
+
+  return element;
 };
 
-const render = (i18nInstance) => (path, value) => {
-  elements.urlInput.classList.remove('is-invalid');
-  elements.feedback.classList.remove('text-success', 'text-danger');
-  elements.feedback.textContent = '';
+const buildContainer = (title, listElems) => {
+  const cardBorder = buildElement('div', { style: ['card', 'border-0'] });
+  const cardBody = buildElement('div', { style: 'card-body' });
+  const cardTitle = buildElement('h2', { style: ['card-title', 'h4'], textContent: title });
+  const list = buildElement('ul', { style: ['list-group', 'border-0', 'rounded-0'] });
 
-  switch (path) {
-    case 'urls':
-      elements.urlInput.classList.remove('is-invalid');
-      elements.feedback.classList.remove('text-danger');
-      elements.feedback.classList.add('text-success');
-      elements.feedback.textContent = i18nInstance.t('success');
+  list.append(...listElems);
+  cardBody.append(cardTitle);
+  cardBorder.append(cardBody, list);
+
+  return cardBorder;
+};
+
+const handleFormState = (elements, formState, i18nInstance) => {
+  switch (formState) {
+    case 'filling':
+      elements.submit.disabled = false;
+      elements.submit.textContent = i18nInstance.t('form.submit');
+      elements.input.focus();
       break;
 
-    case 'form.url':
-      elements.urlInput.value = value;
-      break;
-
-    case 'form.error':
-      elements.urlInput.classList.add('is-invalid');
-      elements.feedback.classList.remove('text-success');
-      elements.feedback.classList.add('text-danger');
-      elements.feedback.textContent = i18nInstance.t(value.message);
+    case 'sending':
+      elements.submit.disabled = true;
+      elements.submit.textContent = i18nInstance.t('form.loading');
       break;
 
     default:
-      break;
+      throw new Error(`Unexpected form state: ${formState}`);
   }
 };
 
-export default (i18nInstance, initialState) => {
-  const watchedState = onChange(initialState, render(i18nInstance));
+const handleErrors = (elements, error, i18nInstance) => {
+  elements.feedback.classList.remove('text-success');
+  elements.feedback.classList.add('text-danger');
 
-  elements.rssForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const url = formData.get('url').trim();
+  if (error === '') {
+    elements.input.classList.remove('is-invalid');
+    elements.feedback.textContent = '';
+    return;
+  }
 
-    watchedState.form.url = url;
+  elements.input.classList.add('is-invalid');
+  elements.feedback.textContent = i18nInstance.t(`errors.${error}`);
+  elements.input.focus();
+};
 
-    const schema = string().url().notOneOf(watchedState.urls);
+const handleFeeds = (container, feeds, i18nInstance) => {
+  const listElems = feeds.map(({ title, description }) => {
+    const listElem = buildElement('li', { style: ['list-group-item', 'border-0', 'border-end-0'] });
 
-    schema
-      .validate(watchedState.form.url)
-      .then(() => {
-        watchedState.urls.push(watchedState.form.url);
-        watchedState.form.url = null;
-      })
-      .catch((error) => (watchedState.form.error = error))
-      .finally(() => elements.urlInput.focus());
+    const titleElem = buildElement('h3', { style: ['h6', 'm-0'], textContent: title });
+
+    const descriptionElem = buildElement('p', {
+      style: ['m-0', 'small', 'text-black-50'],
+      textContent: description,
+    });
+
+    listElem.append(titleElem, descriptionElem);
+
+    return listElem;
   });
+
+  const title = i18nInstance.t('feeds');
+  const feedsContainer = buildContainer(title, listElems);
+
+  container.replaceChildren(feedsContainer);
+};
+
+const handlePosts = (container, posts, i18nInstance) => {
+  const listElems = posts.map(({ id, title, link }) => {
+    const listElem = buildElement('li', {
+      style: ['list-group-item', 'd-flex', 'justify-content-between', 'align-items-baseline', 'border-end-g'],
+    });
+
+    const linkElem = buildElement('a', { style: 'fw-bold', textContent: title });
+
+    linkElem.href = link;
+    linkElem.target = '_blank';
+    linkElem.rel = 'noopener noreferrer';
+    linkElem.setAttribute('data-id', id);
+
+    const button = buildElement('button', {
+      style: ['btn', 'btn-outline-primary', 'btn-sm'],
+      textContent: i18nInstance.t('preview'),
+    });
+
+    button.type = 'button';
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#modal');
+    button.setAttribute('data-id', id);
+
+    listElem.append(linkElem, button);
+
+    return listElem;
+  });
+
+  const title = i18nInstance.t('posts');
+  const postsContainer = buildContainer(title, listElems);
+
+  container.replaceChildren(postsContainer);
+};
+
+export default (elements, state, i18nInstance) => (path, value) => {
+  switch (path) {
+    case 'form.url':
+      elements.input.value = value;
+      break;
+
+    case 'form.state':
+      handleFormState(elements, value, i18nInstance);
+      break;
+
+    case 'form.error':
+      handleErrors(elements, value, i18nInstance);
+      break;
+
+    case 'feeds':
+      elements.feedback.classList.remove('text-danger');
+      elements.feedback.classList.add('text-success');
+      elements.feedback.textContent = i18nInstance.t('success');
+      handleFeeds(elements.feeds, value, i18nInstance);
+      break;
+
+    case 'posts':
+      handlePosts(elements.posts, value, i18nInstance);
+      break;
+
+    default:
+      throw new Error(`Unexpected state: ${path}`);
+  }
 };
