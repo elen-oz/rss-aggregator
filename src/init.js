@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import onChange from 'on-change';
+import _ from 'lodash';
 import i18next from 'i18next';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -27,7 +28,7 @@ const downloadRSS = (url) => {
   //   });
 };
 
-const getId = () => 'Date.now()';
+const getId = () => _.uniqueId();
 
 const getRSSContents = (url) => downloadRSS(url)
   .catch(() => Promise.reject(new Error('networkError')))
@@ -39,7 +40,7 @@ const getRSSContents = (url) => downloadRSS(url)
 const buildPosts = (feedId, items, state) => {
   const posts = items.map((item) => ({
     feedId,
-    id: `feed-${getId()}`,
+    id: getId(),
     ...item,
   }));
   state.posts = posts.concat(state.posts);
@@ -48,6 +49,7 @@ const buildPosts = (feedId, items, state) => {
 const updatePosts = (feedId, state, timeout = 5000) => {
   const feed = state.feeds.find(({ id }) => feedId === id);
 
+  console.log('-----------feed.link', feed.link);
   const cb = () => getRSSContents(feed.link)
     .then(parseRSS)
     .then((parsedRSS) => {
@@ -114,6 +116,7 @@ export default () => {
     feeds: [],
     posts: [],
     readPostIds: new Set(),
+    // readPostIds: [],
   };
 
   const i18nInstance = i18next.createInstance();
@@ -130,17 +133,16 @@ export default () => {
       resources,
     })
     .then(() => {
-      const feedId = `feed-${getId()}`;
+      const feedId = getId();
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         e.target.reset();
-
         // const data = new FormData(e.target);
         // const currentURL = data.get('url').trim();
-
-        const currentURL = state.form.url;
+        let currentURL = state.form.url;
 
         state.form.error = '';
+        state.form.state = 'sending';
         const urlsList = state.feeds.map(({ link }) => link);
         validateURL(currentURL, urlsList)
           .then(() => getRSSContents(currentURL))
@@ -150,15 +152,14 @@ export default () => {
               id: feedId,
               title: parsedRSS.title,
               description: parsedRSS.description,
-              link: state.form.url,
+              link: currentURL,
             };
 
             state.feeds.push(feed);
             buildPosts(feedId, parsedRSS.items, state);
             updatePosts(feedId, state);
-            // updatePosts(state);
 
-            state.form.url = '';
+            currentURL = '';
           })
           .catch((error) => {
             const message = error.message ?? 'default';
@@ -170,12 +171,14 @@ export default () => {
       });
 
       elements.input.addEventListener('change', (e) => {
+        e.preventDefault();
         state.form.url = e.target.value.trim();
       });
 
       elements.posts.addEventListener('click', (e) => {
         const post = state.posts
           .find(({ id }) => e.target.dataset.id === id);
+        console.log('++++++++++ post', post);
         const {
           title,
           description,
@@ -183,6 +186,7 @@ export default () => {
           id,
         } = post;
         state.readPostIds.add(id);
+        // state.readPostIds.push(id);
         if (e.target.dataset.bsTarget !== '#modal') return;
         state.modal = { title, description, link };
       });

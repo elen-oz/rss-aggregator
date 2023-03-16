@@ -111,6 +111,7 @@ const renderPosts = (container, posts, readPostIds, i18nInstance) => {
 
     const linkElem = buildElement('a', {
       style: readPostIds.has(id) ? 'fw--normal' : 'fw-bold',
+      // style: readPostIds.includes(id) ? 'fw--normal' : 'fw-bold',
       textContent: title,
     });
 
@@ -165,7 +166,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
       renderPosts(elements.posts, value, state.readPostIds, i18nInstance);
       break;
 
-    case 'readPostId':
+    case 'readPostIds':
       renderPosts(elements.posts, state.posts, state.readPostIds, i18nInstance);
       break;
 

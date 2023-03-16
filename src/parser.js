@@ -3,7 +3,7 @@ const domParser = new DOMParser();
 export default (responseData) => {
   const xmlDocument = domParser.parseFromString(responseData, 'text/xml');
   const rootTagName = xmlDocument.documentElement.tagName.toLowerCase();
-
+  console.log('===PARSER: rootTagName', rootTagName);
   if (rootTagName !== 'rss') {
     return Promise.reject(new Error('noRSS'));
   }
