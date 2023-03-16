@@ -11,7 +11,7 @@ export default {
 
     errors: {
       default: 'Неверные данные',
-      invalidUrl: 'Ссылка должна быть валидным URL',
+      url: 'Ссылка должна быть валидным URL',
       exist: 'RSS уже существует',
       noRSS: 'Ресурс не содержит валидный RSS',
       networkError: 'Ошибка сети',

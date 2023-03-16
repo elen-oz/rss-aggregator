@@ -1,17 +1,19 @@
 export default (responseData) => {
   const domParser = new DOMParser();
   const xmlDocument = domParser.parseFromString(responseData, 'text/xml');
-  const rootTagName = xmlDocument.documentElement.tagName.toLowerCase();
-  if (rootTagName !== 'rss') {
+  const tagName = xmlDocument.documentElement.tagName.toLowerCase();
+
+  if (tagName !== 'rss') {
     return Promise.reject(new Error('noRSS'));
   }
 
   const channel = xmlDocument.querySelector('channel');
   const channelTitle = xmlDocument.querySelector('channel title').textContent;
-  const channelDescription = xmlDocument.querySelector('channel description').textContent;
+  const channelDescription = xmlDocument.querySelector(
+    'channel description',
+  ).textContent;
 
   const itemElements = channel.getElementsByTagName('item');
-
   const items = [...itemElements].map((item) => {
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;

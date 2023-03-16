@@ -8,6 +8,47 @@ import resources from './locales/index.js';
 import render from './view.js';
 import parseRSS from './parser.js';
 
+const elements = {
+  form: document.querySelector('.rss-form'),
+  input: document.querySelector('#url-input'),
+  feedback: document.querySelector('.feedback'),
+  submit: document.querySelector('button[type="submit"]'),
+  feeds: document.querySelector('.feeds'),
+  posts: document.querySelector('.posts'),
+  modal: {
+    title: document.querySelector('.modal-title'),
+    body: document.querySelector('.modal-body'),
+    fullArticleButton: document.querySelector('.full-article'),
+  },
+};
+
+const getId = () => uniqueId();
+
+const initialState = {
+  form: {
+    state: 'filling',
+    url: '',
+    error: '',
+  },
+  modal: {
+    title: '',
+    description: '',
+    link: '',
+  },
+  feeds: [],
+  posts: [],
+  readPostIds: new Set(),
+};
+
+yup.setLocale({
+  mixed: {
+    required: 'empty',
+    notOneOf: 'exist',
+    default: 'default',
+  },
+  string: { url: 'url' },
+});
+
 const getallOriginsUrl = (url) => {
   const allOriginsUrl = new URL('https://allorigins.hexlet.app/get');
   allOriginsUrl.searchParams.set('disableCache', 'true');
@@ -16,7 +57,10 @@ const getallOriginsUrl = (url) => {
   return axios.get(allOriginsUrl);
 };
 
-const getId = () => uniqueId();
+const validateURL = async (url, parsedLinks) => {
+  const schema = yup.string().required().url().notOneOf(parsedLinks);
+  return schema.validate(url);
+};
 
 const getRSSContent = (url) => getallOriginsUrl(url).catch(() => Promise.reject(new Error('networkError')))
   .then((response) => {
@@ -36,7 +80,6 @@ const buildPosts = (feedId, items, state) => {
 const updatePosts = (feedId, state, timeout = 5000) => {
   const feed = state.feeds.find(({ id }) => feedId === id);
 
-  console.log('-----------feed.link', feed.link);
   const cb = () => getRSSContent(feed.link)
     .then(parseRSS)
     .then((parsedRSS) => {
@@ -59,53 +102,6 @@ const updatePosts = (feedId, state, timeout = 5000) => {
 };
 
 export default () => {
-  const defaultLanguage = 'ru';
-
-  yup.setLocale({
-    mixed: {
-      default: 'default',
-      required: 'empty',
-      notOneOf: 'exist',
-    },
-    string: { url: 'invalidUrl' },
-  });
-
-  const validateURL = async (url, parsedLinks) => {
-    const schema = yup.string().required().url().notOneOf(parsedLinks);
-    return schema.validate(url);
-  };
-
-  const elements = {
-    form: document.querySelector('.rss-form'),
-    input: document.querySelector('#url-input'),
-    feedback: document.querySelector('.feedback'),
-    submit: document.querySelector('button[type="submit"]'),
-    feeds: document.querySelector('.feeds'),
-    posts: document.querySelector('.posts'),
-    modal: {
-      title: document.querySelector('.modal-title'),
-      body: document.querySelector('.modal-body'),
-      fullArticleButton: document.querySelector('full-article'),
-    },
-  };
-
-  const initialState = {
-    form: {
-      state: 'filling',
-      url: '',
-      error: '',
-    },
-    modal: {
-      title: '',
-      description: '',
-      link: '',
-    },
-    feeds: [],
-    posts: [],
-    readPostIds: new Set(),
-    // readPostIds: [],
-  };
-
   const i18nInstance = i18next.createInstance();
 
   const state = onChange(
@@ -115,7 +111,7 @@ export default () => {
 
   i18nInstance
     .init({
-      lng: defaultLanguage,
+      lng: 'ru',
       debug: true,
       resources,
     })
@@ -124,8 +120,6 @@ export default () => {
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         e.target.reset();
-        // const data = new FormData(e.target);
-        // const currentURL = data.get('url').trim();
         let currentURL = state.form.url;
 
         state.form.error = '';
@@ -164,7 +158,6 @@ export default () => {
 
       elements.posts.addEventListener('click', (e) => {
         const post = state.posts.find(({ id }) => e.target.dataset.id === id);
-        console.log('++++++++++ post', post);
         const {
           title, description, link, id,
         } = post;
