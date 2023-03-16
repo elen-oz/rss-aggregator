@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import onChange from 'on-change';
-import _ from 'lodash';
+import { uniqueId } from 'lodash';
 import i18next from 'i18next';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -8,20 +8,17 @@ import resources from './locales/index.js';
 import render from './view.js';
 import parseRSS from './parser.js';
 
-const downloadRSS = (url) => {
-  const allOriginsLink = 'https://allorigins.hexlet.app/get';
+const getallOriginsUrl = (url) => {
+  const allOriginsUrl = new URL('https://allorigins.hexlet.app/get');
+  allOriginsUrl.searchParams.set('disableCache', 'true');
+  allOriginsUrl.searchParams.set('url', url);
 
-  const workingUrl = new URL(allOriginsLink);
-
-  workingUrl.searchParams.set('disableCache', 'true');
-  workingUrl.searchParams.set('url', url);
-
-  return axios.get(workingUrl);
+  return axios.get(allOriginsUrl);
 };
 
-const getId = () => _.uniqueId();
+const getId = () => uniqueId();
 
-const getRSSContent = (url) => downloadRSS(url).catch(() => Promise.reject(new Error('networkError')))
+const getRSSContent = (url) => getallOriginsUrl(url).catch(() => Promise.reject(new Error('networkError')))
   .then((response) => {
     const responseData = response.data.contents;
     return Promise.resolve(responseData);
