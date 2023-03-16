@@ -2,7 +2,7 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
 import axios from 'axios';
-import { string, setLocale } from 'yup';
+import * as yup from 'yup';
 import resources from './locales/index.js';
 import render from './view.js';
 import parseRSS from './parser.js';
@@ -18,9 +18,7 @@ const downloadRSS = (url) => {
   return axios.get(workingUrl);
 
   // fetch(
-  //   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(
-  //     'https://wikipedia.org',
-  //   )}`,
+  //   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`,
   // )
   //   .then((response) => {
   //     console.log('----------', response.url);
@@ -28,6 +26,8 @@ const downloadRSS = (url) => {
   //     throw new Error('Network response was not ok.');
   //   });
 };
+
+const getId = () => 'Date.now()';
 
 const getRSSContents = (url) => downloadRSS(url)
   .catch(() => Promise.reject(new Error('networkError')))
@@ -39,7 +39,7 @@ const getRSSContents = (url) => downloadRSS(url)
 const buildPosts = (feedId, items, state) => {
   const posts = items.map((item) => ({
     feedId,
-    id: `feed-${Date.now()}`,
+    id: `feed-${getId()}`,
     ...item,
   }));
   state.posts = posts.concat(state.posts);
@@ -72,21 +72,32 @@ const updatePosts = (feedId, state, timeout = 5000) => {
 export default () => {
   const defaultLanguage = 'ru';
 
-  setLocale({
+  yup.setLocale({
     mixed: { default: 'default', notOneOf: 'exist' },
     string: { url: 'url' },
   });
 
-  const i18nInstance = i18next.createInstance();
+  const validateURL = async (url, parsedLinks) => {
+    const schema = yup
+      .string()
+      .required()
+      .url()
+      .notOneOf(parsedLinks);
+    return schema.validate(url);
+  };
 
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.querySelector('#url-input'),
-    // example: document.querySelector('.text-muted'),
     feedback: document.querySelector('.feedback'),
     submit: document.querySelector('button[type="submit"]'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    modal: {
+      title: document.querySelector('.modal-title'),
+      body: document.querySelector('.modal-body'),
+      fullArticleButton: document.querySelector('full-article'),
+    },
   };
 
   const initialState = {
@@ -95,9 +106,17 @@ export default () => {
       url: '',
       error: '',
     },
+    modal: {
+      title: '',
+      description: '',
+      link: '',
+    },
     feeds: [],
     posts: [],
+    readPostIds: new Set(),
   };
+
+  const i18nInstance = i18next.createInstance();
 
   const state = onChange(
     initialState,
@@ -111,24 +130,22 @@ export default () => {
       resources,
     })
     .then(() => {
+      const feedId = `feed-${getId()}`;
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
+        e.target.reset();
+
+        // const data = new FormData(e.target);
+        // const currentURL = data.get('url').trim();
+
+        const currentURL = state.form.url;
 
         state.form.error = '';
         const urlsList = state.feeds.map(({ link }) => link);
-        const schema = string().url().notOneOf(urlsList);
-
-        schema
-          .validate(state.form.url)
-          .then(() => {
-            state.form.state = 'sending';
-
-            return getRSSContents(state.form.url);
-          })
+        validateURL(currentURL, urlsList)
+          .then(() => getRSSContents(currentURL))
           .then(parseRSS)
           .then((parsedRSS) => {
-            const feedId = `feed-${Date.now()}`;
-
             const feed = {
               id: feedId,
               title: parsedRSS.title,
@@ -139,6 +156,7 @@ export default () => {
             state.feeds.push(feed);
             buildPosts(feedId, parsedRSS.items, state);
             updatePosts(feedId, state);
+            // updatePosts(state);
 
             state.form.url = '';
           })
@@ -154,5 +172,20 @@ export default () => {
       elements.input.addEventListener('change', (e) => {
         state.form.url = e.target.value.trim();
       });
+
+      elements.posts.addEventListener('click', (e) => {
+        const post = state.posts
+          .find(({ id }) => e.target.dataset.id === id);
+        const {
+          title,
+          description,
+          link,
+          id,
+        } = post;
+        state.readPostIds.add(id);
+        if (e.target.dataset.bsTarget !== '#modal') return;
+        state.modal = { title, description, link };
+      });
+      updatePosts(feedId, state);
     });
 };

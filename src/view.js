@@ -97,7 +97,7 @@ const renderFeeds = (container, feeds, i18nInstance) => {
   container.replaceChildren(feedsContainer);
 };
 
-const renderPosts = (container, posts, i18nInstance) => {
+const renderPosts = (container, posts, readPostIds, i18nInstance) => {
   const listElems = posts.map(({ id, title, link }) => {
     const listElem = buildElement('li', {
       style: [
@@ -110,7 +110,7 @@ const renderPosts = (container, posts, i18nInstance) => {
     });
 
     const linkElem = buildElement('a', {
-      style: 'fw-bold',
+      style: readPostIds.has(id) ? 'fw--normal' : 'fw-bold',
       textContent: title,
     });
 
@@ -162,7 +162,17 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'posts':
-      renderPosts(elements.posts, value, i18nInstance);
+      renderPosts(elements.posts, value, state.readPostIds, i18nInstance);
+      break;
+
+    case 'readPostId':
+      renderPosts(elements.posts, state.posts, state.readPostIds, i18nInstance);
+      break;
+
+    case 'modal':
+      elements.modal.title.textContent = value.title;
+      elements.modal.body.textContent = value.description;
+      elements.modal.fullArticleButton.href = value.link;
       break;
 
     default:
