@@ -17,21 +17,11 @@ const downloadRSS = (url) => {
   workingUrl.searchParams.set('url', url);
 
   return axios.get(workingUrl);
-
-  // fetch(
-  //   `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`,
-  // )
-  //   .then((response) => {
-  //     console.log('----------', response.url);
-  //     if (response.ok) return response.url;
-  //     throw new Error('Network response was not ok.');
-  //   });
 };
 
 const getId = () => _.uniqueId();
 
-const getRSSContents = (url) => downloadRSS(url)
-  .catch(() => Promise.reject(new Error('networkError')))
+const getRSSContent = (url) => downloadRSS(url).catch(() => Promise.reject(new Error('networkError')))
   .then((response) => {
     const responseData = response.data.contents;
     return Promise.resolve(responseData);
@@ -50,7 +40,7 @@ const updatePosts = (feedId, state, timeout = 5000) => {
   const feed = state.feeds.find(({ id }) => feedId === id);
 
   console.log('-----------feed.link', feed.link);
-  const cb = () => getRSSContents(feed.link)
+  const cb = () => getRSSContent(feed.link)
     .then(parseRSS)
     .then((parsedRSS) => {
       const postsUrls = state.posts
@@ -75,16 +65,16 @@ export default () => {
   const defaultLanguage = 'ru';
 
   yup.setLocale({
-    mixed: { default: 'default', notOneOf: 'exist' },
-    string: { url: 'url' },
+    mixed: {
+      default: 'default',
+      required: 'empty',
+      notOneOf: 'exist',
+    },
+    string: { url: 'invalidUrl' },
   });
 
   const validateURL = async (url, parsedLinks) => {
-    const schema = yup
-      .string()
-      .required()
-      .url()
-      .notOneOf(parsedLinks);
+    const schema = yup.string().required().url().notOneOf(parsedLinks);
     return schema.validate(url);
   };
 
@@ -145,7 +135,7 @@ export default () => {
         state.form.state = 'sending';
         const urlsList = state.feeds.map(({ link }) => link);
         validateURL(currentURL, urlsList)
-          .then(() => getRSSContents(currentURL))
+          .then(() => getRSSContent(currentURL))
           .then(parseRSS)
           .then((parsedRSS) => {
             const feed = {
@@ -176,14 +166,10 @@ export default () => {
       });
 
       elements.posts.addEventListener('click', (e) => {
-        const post = state.posts
-          .find(({ id }) => e.target.dataset.id === id);
+        const post = state.posts.find(({ id }) => e.target.dataset.id === id);
         console.log('++++++++++ post', post);
         const {
-          title,
-          description,
-          link,
-          id,
+          title, description, link, id,
         } = post;
         state.readPostIds.add(id);
         // state.readPostIds.push(id);

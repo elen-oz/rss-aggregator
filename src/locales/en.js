@@ -1,20 +1,20 @@
 export default {
   translation: {
     form: {
-      submit: 'В добавок',
-      loading: 'Обождите',
+      submit: 'Add',
+      loading: 'Loading',
     },
-    feeds: 'Источники',
-    posts: 'Вести',
-    preview: 'Глянуть',
-    success: 'Выполнили, как изволили',
+    feeds: 'Feeds',
+    posts: 'Posts',
+    preview: 'Preview',
+    success: 'RSS feed successfully added',
 
     errors: {
-      default: 'Накладка какая-то',
-      url: 'Оплошность в шифре',
-      exist: 'Оный источник нонче бытует уже',
-      noRSS: 'Оный источник не на ходу',
-      networkError: 'Ляпус с сетью. Опробуйте сызнова',
+      default: 'Unknown error. Something went wrong',
+      invalidUrl: 'Link must be This RSS feed has already been addedRSS уже существует',
+      noRSS: 'Ресурс не содержит валидный RSS',
+      networkError: 'Network Problems',
+      empty: 'Must not be empty',
     },
   },
 };
