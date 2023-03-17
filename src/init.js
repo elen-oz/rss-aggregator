@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import { uniqueId } from 'lodash';
 import i18next from 'i18next';
@@ -77,28 +76,24 @@ const buildPosts = (feedId, items, state) => {
   state.posts = posts.concat(state.posts);
 };
 
-const updatePosts = (feedId, state, timeout = 5000) => {
-  const feed = state.feeds.find(({ id }) => feedId === id);
-
-  const cb = () => getRSSContent(feed.link)
+const updatePosts = (state, timeout = 5000) => {
+  const promises = state.feeds.map((feed) => getRSSContent(feed.link)
     .then(parseRSS)
     .then((parsedRSS) => {
+      const feedId = feed.id;
       const postsUrls = state.posts
         .filter((post) => feedId === post.feedId)
         .map(({ link }) => link);
-      const newItems = parsedRSS.items.filter(
-        ({ link }) => !postsUrls.includes(link),
-      );
+      const newItems = parsedRSS.items.filter(({ link }) => !postsUrls.includes(link));
 
       if (newItems.length > 0) {
         buildPosts(feedId, newItems, state);
       }
-    })
-    .finally(() => {
-      setTimeout(cb, timeout);
-    });
+    }));
 
-  setTimeout(cb, timeout);
+  Promise.all(promises).finally(() => {
+    setTimeout(() => updatePosts(state, timeout), timeout);
+  });
 };
 
 export default () => {
@@ -138,7 +133,7 @@ export default () => {
 
             state.feeds.push(feed);
             buildPosts(feedId, parsedRSS.items, state);
-            updatePosts(feedId, state);
+            updatePosts(state);
 
             currentURL = '';
           })
@@ -162,10 +157,8 @@ export default () => {
           title, description, link, id,
         } = post;
         state.readPostIds.add(id);
-        // state.readPostIds.push(id);
         if (e.target.dataset.bsTarget !== '#modal') return;
         state.modal = { title, description, link };
       });
-      updatePosts(feedId, state);
     });
 };
