@@ -16,8 +16,8 @@ const validateURL = async (url, parsedLinks) => {
   return schema.validate(url);
 };
 
-const getRSSContent = (url) => proxify(url)
-  .then((response) => {
+const getRSSContent = (url) =>
+  proxify(url).then((response) => {
     const responseData = response.data.contents;
     return Promise.resolve(responseData);
   });
@@ -32,19 +32,23 @@ const buildPosts = (feedId, items, state) => {
 };
 
 const updatePosts = (state, timeout = 5000) => {
-  const promises = state.feeds.map((feed) => getRSSContent(feed.link)
-    .then(parseRSS)
-    .then((parsedRSS) => {
-      const feedId = feed.id;
-      const postsUrls = state.posts
-        .filter((post) => feedId === post.feedId)
-        .map(({ link }) => link);
-      const newItems = parsedRSS.items.filter(({ link }) => !postsUrls.includes(link));
+  const promises = state.feeds.map((feed) =>
+    getRSSContent(feed.link)
+      .then(parseRSS)
+      .then((parsedRSS) => {
+        const feedId = feed.id;
+        const postsUrls = state.posts
+          .filter((post) => feedId === post.feedId)
+          .map(({ link }) => link);
+        const newItems = parsedRSS.items.filter(
+          ({ link }) => !postsUrls.includes(link)
+        );
 
-      if (newItems.length > 0) {
-        buildPosts(feedId, newItems, state);
-      }
-    }));
+        if (newItems.length > 0) {
+          buildPosts(feedId, newItems, state);
+        }
+      })
+  );
 
   Promise.all(promises).finally(() => {
     setTimeout(() => updatePosts(state, timeout), timeout);
@@ -101,17 +105,16 @@ export default () => {
 
       const state = onChange(
         initialState,
-        render(elements, initialState, i18nInstance),
+        render(elements, initialState, i18nInstance)
       );
 
       const feedId = getId();
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        e.target.reset();
-        let currentURL = state.form.url;
+        const formData = new FormData(e.target);
+        let currentURL = formData.get('url');
 
-        state.form.error = '';
         state.form.state = 'sending';
         const urlsList = state.feeds.map(({ link }) => link);
         validateURL(currentURL, urlsList)
@@ -128,28 +131,20 @@ export default () => {
             state.feeds.push(feed);
             buildPosts(feedId, parsedRSS.items, state);
             updatePosts(state);
-
-            currentURL = '';
           })
           .catch((error) => {
             const message = error.message ?? 'default';
             state.form.error = message;
           })
           .finally(() => {
+            e.target.reset();
             state.form.state = 'filling';
           });
       });
 
-      elements.input.addEventListener('change', (e) => {
-        e.preventDefault();
-        state.form.url = e.target.value.trim();
-      });
-
       elements.posts.addEventListener('click', (e) => {
         const post = state.posts.find(({ id }) => e.target.dataset.id === id);
-        const {
-          title, description, link, id,
-        } = post;
+        const { title, description, link, id } = post;
         state.readPostIds.add(id);
         if (e.target.dataset.bsTarget !== '#modal') return;
         state.modal = { title, description, link };
