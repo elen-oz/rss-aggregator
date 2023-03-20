@@ -4,7 +4,7 @@ export default (responseData) => {
 
   const parserError = xmlDocument.querySelector('parsererror');
   if (parserError) {
-    throw new Error('ParsingError');
+    throw new Error('parsingError');
   }
 
   const channel = xmlDocument.querySelector('channel');

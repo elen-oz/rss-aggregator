@@ -9,13 +9,7 @@ import parseRSS from './parser.js';
 
 const getId = () => uniqueId();
 
-const proxify = (url) => {
-  const proxyURL = new URL('https://allorigins.hexlet.app/get');
-  proxyURL.searchParams.set('disableCache', 'true');
-  proxyURL.searchParams.set('url', url);
-
-  return axios.get(proxyURL);
-};
+const proxify = (url) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`);
 
 const validateURL = async (url, parsedLinks) => {
   const schema = yup.string().required().url().notOneOf(parsedLinks);
