@@ -11,11 +11,11 @@ export default {
 
     errors: {
       default: 'Неверные данные',
-      url: 'Ссылка должна быть валидным URL',
+      invalidUrl: 'Ссылка должна быть валидным URL',
       exist: 'RSS уже существует',
       parsingError: 'Ресурс не содержит валидный RSS',
       'Network Error': 'Ошибка сети',
-      empty: 'Не должно быть пустым',
+      isEmpty: 'Не должно быть пустым',
     },
   },
 };

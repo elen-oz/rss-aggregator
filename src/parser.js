@@ -1,4 +1,4 @@
-export default (responseData) => {
+export default (responseData, url = null) => {
   const domParser = new DOMParser();
   const xmlDocument = domParser.parseFromString(responseData, 'text/xml');
 
@@ -25,6 +25,7 @@ export default (responseData) => {
   const parsedData = {
     title: channelTitle,
     description: channelDescription,
+    link: url,
     items,
   };
 

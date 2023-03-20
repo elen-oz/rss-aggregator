@@ -154,6 +154,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'feeds':
+      elements.input.classList.remove('is-invalid');
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
       elements.feedback.textContent = i18nInstance.t('success');
