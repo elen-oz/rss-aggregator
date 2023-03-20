@@ -7,53 +7,14 @@ import resources from './locales/index.js';
 import render from './view.js';
 import parseRSS from './parser.js';
 
-const elements = {
-  form: document.querySelector('.rss-form'),
-  input: document.querySelector('#url-input'),
-  feedback: document.querySelector('.feedback'),
-  submit: document.querySelector('button[type="submit"]'),
-  feeds: document.querySelector('.feeds'),
-  posts: document.querySelector('.posts'),
-  modal: {
-    title: document.querySelector('.modal-title'),
-    body: document.querySelector('.modal-body'),
-    fullArticleButton: document.querySelector('.full-article'),
-  },
-};
-
 const getId = () => uniqueId();
 
-const initialState = {
-  form: {
-    state: 'filling',
-    url: '',
-    error: '',
-  },
-  modal: {
-    title: '',
-    description: '',
-    link: '',
-  },
-  feeds: [],
-  posts: [],
-  readPostIds: new Set(),
-};
+const proxify = (url) => {
+  const proxyURL = new URL('https://allorigins.hexlet.app/get');
+  proxyURL.searchParams.set('disableCache', 'true');
+  proxyURL.searchParams.set('url', url);
 
-yup.setLocale({
-  mixed: {
-    required: 'empty',
-    notOneOf: 'exist',
-    default: 'default',
-  },
-  string: { url: 'url' },
-});
-
-const getallOriginsUrl = (url) => {
-  const allOriginsUrl = new URL('https://allorigins.hexlet.app/get');
-  allOriginsUrl.searchParams.set('disableCache', 'true');
-  allOriginsUrl.searchParams.set('url', url);
-
-  return axios.get(allOriginsUrl);
+  return axios.get(proxyURL);
 };
 
 const validateURL = async (url, parsedLinks) => {
@@ -61,7 +22,7 @@ const validateURL = async (url, parsedLinks) => {
   return schema.validate(url);
 };
 
-const getRSSContent = (url) => getallOriginsUrl(url).catch(() => Promise.reject(new Error('networkError')))
+const getRSSContent = (url) => proxify(url).catch(() => Promise.reject(new Error('networkError')))
   .then((response) => {
     const responseData = response.data.contents;
     return Promise.resolve(responseData);
@@ -98,12 +59,6 @@ const updatePosts = (state, timeout = 5000) => {
 
 export default () => {
   const i18nInstance = i18next.createInstance();
-
-  const state = onChange(
-    initialState,
-    render(elements, initialState, i18nInstance),
-  );
-
   i18nInstance
     .init({
       lng: 'ru',
@@ -111,7 +66,52 @@ export default () => {
       resources,
     })
     .then(() => {
+      const initialState = {
+        form: {
+          state: 'filling',
+          url: '',
+          error: '',
+        },
+        modal: {
+          title: '',
+          description: '',
+          link: '',
+        },
+        feeds: [],
+        posts: [],
+        readPostIds: new Set(),
+      };
+
+      yup.setLocale({
+        mixed: {
+          required: 'empty',
+          notOneOf: 'exist',
+          default: 'default',
+        },
+        string: { url: 'url' },
+      });
+
+      const elements = {
+        form: document.querySelector('.rss-form'),
+        input: document.querySelector('#url-input'),
+        feedback: document.querySelector('.feedback'),
+        submit: document.querySelector('button[type="submit"]'),
+        feeds: document.querySelector('.feeds'),
+        posts: document.querySelector('.posts'),
+        modal: {
+          title: document.querySelector('.modal-title'),
+          body: document.querySelector('.modal-body'),
+          fullArticleButton: document.querySelector('.full-article'),
+        },
+      };
+
+      const state = onChange(
+        initialState,
+        render(elements, initialState, i18nInstance),
+      );
+
       const feedId = getId();
+
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         e.target.reset();
