@@ -16,7 +16,7 @@ const validateURL = async (url, parsedLinks) => {
   return schema.validate(url);
 };
 
-const getRSSContent = (url) => proxify(url).catch(() => Promise.reject(new Error('networkError')))
+const getRSSContent = (url) => proxify(url)
   .then((response) => {
     const responseData = response.data.contents;
     return Promise.resolve(responseData);
