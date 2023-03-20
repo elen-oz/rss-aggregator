@@ -112,7 +112,6 @@ export default () => {
 
         state.form.state = 'sending';
         const urlsList = state.feeds.map(({ link }) => link);
-        console.log('---urlsList:', urlsList);
         validateURL(currentURL, urlsList)
           .then(() => getRSSContent(currentURL))
           .then(parseRSS)
