@@ -12,7 +12,7 @@ export default {
     errors: {
       default: 'Unknown error. Something went wrong',
       invalidUrl: 'Link must be This RSS feed has already been addedRSS уже существует',
-      noRSS: 'Ресурс не содержит валидный RSS',
+      ParsingError: 'The resource does not contain valid RSS',
       networkError: 'Network Problems',
       empty: 'Must not be empty',
     },
