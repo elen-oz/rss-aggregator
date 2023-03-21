@@ -11,7 +11,7 @@ const getId = () => uniqueId();
 
 const proxify = (url) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`);
 
-const validateURL = async (url, parsedLinks) => {
+const validateURL = (url, parsedLinks) => {
   const schema = yup.string().required().url().notOneOf(parsedLinks);
   return schema.validate(url);
 };
