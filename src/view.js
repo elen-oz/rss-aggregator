@@ -140,6 +140,10 @@ const renderPosts = (container, posts, readPostIds, i18nInstance) => {
 };
 
 export default (elements, state, i18nInstance) => (path, value) => {
+  let title;
+  let description;
+  let link;
+
   switch (path) {
     case 'form.url':
       elements.input.value = value;
@@ -170,9 +174,9 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'modal':
-      const { title, description, link } = state.posts.find(
+      ({ title, description, link } = state.posts.find(
         ({ id }) => id === value.id,
-      );
+      ));
       elements.modal.title.textContent = title;
       elements.modal.body.textContent = description;
       elements.modal.fullArticleButton.href = link;

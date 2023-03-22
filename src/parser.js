@@ -12,7 +12,7 @@ export default (responseData, url = null) => {
   const channel = xmlDocument.querySelector('channel');
   const channelTitle = xmlDocument.querySelector('channel title').textContent;
   const channelDescription = xmlDocument.querySelector(
-    'channel description'
+    'channel description',
   ).textContent;
 
   const itemElements = channel.getElementsByTagName('item');
