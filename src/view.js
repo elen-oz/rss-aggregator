@@ -170,9 +170,12 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'modal':
-      elements.modal.title.textContent = value.title;
-      elements.modal.body.textContent = value.description;
-      elements.modal.fullArticleButton.href = value.link;
+      const { title, description, link } = state.posts.find(
+        ({ id }) => id === value.id,
+      );
+      elements.modal.title.textContent = title;
+      elements.modal.body.textContent = description;
+      elements.modal.fullArticleButton.href = link;
       break;
 
     default:
