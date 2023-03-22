@@ -38,12 +38,12 @@ const buildPosts = (feedId, items, state) => {
 const updatePosts = (state, timeout = 5000) => {
   const promises = state.feeds.map((feed) => getRSSContent(feed.link)
     .then(parseRSS)
-    .then((parsedRSS) => {
+    .then((response) => {
       const feedId = feed.id;
       const postsUrls = state.posts
         .filter((post) => feedId === post.feedId)
         .map(({ link }) => link);
-      const newItems = parsedRSS.items.filter(
+      const newItems = response.items.filter(
         ({ link }) => !postsUrls.includes(link),
       );
 
@@ -117,17 +117,17 @@ export default () => {
         validateURL(currentURL, urlsList)
           .then(() => getRSSContent(currentURL))
           .then(parseRSS)
-          .then((parsedRSS) => {
+          .then((response) => {
             const feedId = getId();
             const feed = {
               id: feedId,
-              title: parsedRSS.title,
-              description: parsedRSS.description,
+              title: response.title,
+              description: response.description,
               link: currentURL,
             };
 
             state.feeds.push(feed);
-            buildPosts(feedId, parsedRSS.items, state);
+            buildPosts(feedId, response.items, state);
           })
           .catch((error) => {
             const message = error.isParsingError ? 'parsingError' : '';
