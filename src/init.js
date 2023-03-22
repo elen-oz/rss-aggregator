@@ -10,11 +10,12 @@ import parseRSS from './parser.js';
 const getId = () => uniqueId();
 
 const proxifyAndRequest = (url) => {
-  const allOriginsUrl = new URL('https://allorigins.hexlet.app/get');
-  allOriginsUrl.searchParams.set('disableCache', 'true');
-  allOriginsUrl.searchParams.set('url', url);
-  return allOriginsUrl;
+  const proxifyUrl = new URL('https://allorigins.hexlet.app/get');
+  proxifyUrl.searchParams.set('disableCache', 'true');
+  proxifyUrl.searchParams.set('url', url);
+  return axios.get(proxifyUrl.toString());
 };
+
 const validateURL = (url, parsedLinks) => {
   const schema = yup.string().required().url().notOneOf(parsedLinks);
   return schema.validate(url);
@@ -22,7 +23,7 @@ const validateURL = (url, parsedLinks) => {
 
 const getRSSContent = (url) => proxifyAndRequest(url).then((response) => {
   const responseData = response.data.contents;
-  return Promise.resolve(responseData);
+  return responseData;
 });
 
 const buildPosts = (feedId, items, state) => {
