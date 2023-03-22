@@ -134,7 +134,7 @@ export default () => {
             updatePosts(state);
           })
           .catch((error) => {
-            const message = error.message ?? 'default';
+            const message = error.isParsingError ? 'parsingError' : '';
             state.form.error = message;
           })
           .finally(() => {
