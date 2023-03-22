@@ -11,11 +11,11 @@ export default {
 
     errors: {
       default: 'Unknown error. Something went wrong',
-      invalidUrl:
-        'Link must be This RSS feed has already been addedRSS уже существует',
+      invalidUrl: 'Link must be valid URL link',
+      exist: 'This RSS feed has already been added',
       ParsingError: 'The resource does not contain valid RSS',
       'Network Error': 'Network Problems',
-      empty: 'Must not be empty',
+      isEmpty: 'Must not be empty',
     },
   },
 };

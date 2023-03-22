@@ -43,9 +43,7 @@ const updatePosts = (state, timeout = 5000) => {
       const postsUrls = state.posts
         .filter((post) => feedId === post.feedId)
         .map(({ link }) => link);
-      const newItems = response.items.filter(
-        ({ link }) => !postsUrls.includes(link),
-      );
+      const newItems = response.items.filter(({ link }) => !postsUrls.includes(link));
 
       if (newItems.length > 0) {
         buildPosts(feedId, newItems, state);
@@ -81,11 +79,13 @@ export default () => {
 
       yup.setLocale({
         mixed: {
-          required: 'isEmpty',
           notOneOf: 'exist',
           default: 'default',
         },
-        string: { url: 'invalidUrl' },
+        string: {
+          required: 'isEmpty',
+          url: 'invalidUrl',
+        },
       });
 
       const elements = {
@@ -102,10 +102,7 @@ export default () => {
         },
       };
 
-      const state = onChange(
-        initialState,
-        render(elements, initialState, i18nInstance),
-      );
+      const state = onChange(initialState, render(elements, initialState, i18nInstance));
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -130,7 +127,7 @@ export default () => {
             buildPosts(feedId, response.items, state);
           })
           .catch((error) => {
-            const message = error.isParsingError ? 'parsingError' : '';
+            const message = error.isParsingError ? 'parsingError' : error.message;
             state.error = message;
           })
           .finally(() => {

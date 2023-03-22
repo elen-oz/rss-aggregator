@@ -36,7 +36,7 @@ const buildContainer = (title, listElems) => {
   return cardBorder;
 };
 
-const renderFormState = (elements, formState, i18nInstance) => {
+const handleFormState = (elements, formState, i18nInstance) => {
   switch (formState) {
     case 'done':
       elements.submit.disabled = false;
@@ -54,7 +54,7 @@ const renderFormState = (elements, formState, i18nInstance) => {
   }
 };
 
-const renderErrors = (elements, error, i18nInstance) => {
+const handleErrors = (elements, error, i18nInstance) => {
   elements.feedback.classList.remove('text-success');
   elements.feedback.classList.add('text-danger');
 
@@ -69,7 +69,7 @@ const renderErrors = (elements, error, i18nInstance) => {
   elements.input.focus();
 };
 
-const renderFeeds = (container, feeds, i18nInstance) => {
+const handleFeeds = (container, feeds, i18nInstance) => {
   const listElems = feeds.map(({ title, description }) => {
     const listElem = buildElement('li', {
       style: ['list-group-item', 'border-0', 'border-end-0'],
@@ -96,7 +96,7 @@ const renderFeeds = (container, feeds, i18nInstance) => {
   container.replaceChildren(feedsContainer);
 };
 
-const renderPosts = (container, posts, readPostIds, i18nInstance) => {
+const handlePosts = (container, posts, readPostIds, i18nInstance) => {
   const listElems = posts.map(({ id, title, link }) => {
     const listElem = buildElement('li', {
       style: [
@@ -146,7 +146,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
 
   switch (path) {
     case 'loadingProcess':
-      renderFormState(elements, value, i18nInstance);
+      handleFormState(elements, value, i18nInstance);
       break;
 
     case 'feeds':
@@ -154,20 +154,20 @@ export default (elements, state, i18nInstance) => (path, value) => {
       elements.feedback.classList.remove('text-danger');
       elements.feedback.classList.add('text-success');
       elements.feedback.textContent = i18nInstance.t('success');
-      renderFeeds(elements.feeds, value, i18nInstance);
+      handleFeeds(elements.feeds, value, i18nInstance);
       break;
 
     case 'posts':
-      renderPosts(elements.posts, value, state.readPostIds, i18nInstance);
+      handlePosts(elements.posts, value, state.readPostIds, i18nInstance);
       break;
 
     case 'readPostIds':
-      renderPosts(elements.posts, state.posts, state.readPostIds, i18nInstance);
+      handlePosts(elements.posts, state.posts, state.readPostIds, i18nInstance);
       break;
 
     case 'modal':
       ({ title, description, link } = state.posts.find(
-        ({ id }) => id === value.id
+        ({ id }) => id === value.id,
       ));
       elements.modal.title.textContent = title;
       elements.modal.body.textContent = description;
@@ -175,7 +175,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'error':
-      renderErrors(elements, value, i18nInstance);
+      handleErrors(elements, value, i18nInstance);
       break;
 
     default:
