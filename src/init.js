@@ -9,14 +9,18 @@ import parseRSS from './parser.js';
 
 const getId = () => uniqueId();
 
-const proxify = (url) => axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`);
-
+const proxifyAndRequest = (url) => {
+  const allOriginsUrl = new URL('https://allorigins.hexlet.app/get');
+  allOriginsUrl.searchParams.set('disableCache', 'true');
+  allOriginsUrl.searchParams.set('url', url);
+  return allOriginsUrl;
+};
 const validateURL = (url, parsedLinks) => {
   const schema = yup.string().required().url().notOneOf(parsedLinks);
   return schema.validate(url);
 };
 
-const getRSSContent = (url) => proxify(url).then((response) => {
+const getRSSContent = (url) => proxifyAndRequest(url).then((response) => {
   const responseData = response.data.contents;
   return Promise.resolve(responseData);
 });
