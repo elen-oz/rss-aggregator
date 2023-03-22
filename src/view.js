@@ -38,13 +38,13 @@ const buildContainer = (title, listElems) => {
 
 const renderFormState = (elements, formState, i18nInstance) => {
   switch (formState) {
-    case 'filling':
+    case 'done':
       elements.submit.disabled = false;
       elements.submit.textContent = i18nInstance.t('form.submit');
       elements.input.focus();
       break;
 
-    case 'sending':
+    case 'loading':
       elements.submit.disabled = true;
       elements.submit.textContent = i18nInstance.t('form.loading');
       break;
@@ -145,16 +145,8 @@ export default (elements, state, i18nInstance) => (path, value) => {
   let link;
 
   switch (path) {
-    case 'form.url':
-      elements.input.value = value;
-      break;
-
-    case 'form.state':
+    case 'loadingProcess':
       renderFormState(elements, value, i18nInstance);
-      break;
-
-    case 'form.error':
-      renderErrors(elements, value, i18nInstance);
       break;
 
     case 'feeds':
@@ -175,11 +167,15 @@ export default (elements, state, i18nInstance) => (path, value) => {
 
     case 'modal':
       ({ title, description, link } = state.posts.find(
-        ({ id }) => id === value.id,
+        ({ id }) => id === value.id
       ));
       elements.modal.title.textContent = title;
       elements.modal.body.textContent = description;
       elements.modal.fullArticleButton.href = link;
+      break;
+
+    case 'error':
+      renderErrors(elements, value, i18nInstance);
       break;
 
     default:

@@ -67,11 +67,8 @@ export default () => {
     })
     .then(() => {
       const initialState = {
-        form: {
-          state: 'filling',
-          url: '',
-          error: '',
-        },
+        loadingProcess: 'done',
+        error: '',
         modal: {
           title: '',
           description: '',
@@ -115,7 +112,7 @@ export default () => {
         const formData = new FormData(e.target);
         const currentURL = formData.get('url');
 
-        state.form.state = 'sending';
+        state.loadingProcess = 'loading';
         const urlsList = state.feeds.map(({ link }) => link);
         validateURL(currentURL, urlsList)
           .then(() => getRSSContent(currentURL))
@@ -134,21 +131,13 @@ export default () => {
           })
           .catch((error) => {
             const message = error.isParsingError ? 'parsingError' : '';
-            state.form.error = message;
+            state.error = message;
           })
           .finally(() => {
-            state.form.state = 'filling';
+            state.loadingProcess = 'done';
             e.target.reset();
           });
       });
-
-      // elements.posts.addEventListener('click', (e) => {
-      //   const post = state.posts.find(({ id }) => e.target.dataset.id === id);
-      //   const { title, description, link, id } = post;
-      //   state.readPostIds.add(id);
-      //   if (e.target.dataset.bsTarget !== '#modal') return;
-      //   state.modal = { title, description, link };
-      // });
 
       elements.posts.addEventListener('click', (e) => {
         const postId = e.target.dataset.id;
