@@ -67,11 +67,7 @@ export default () => {
       const initialState = {
         loadingProcess: null,
         error: '',
-        modal: {
-          title: '',
-          description: '',
-          link: '',
-        },
+        modal: '',
         feeds: [],
         posts: [],
         readPostIds: new Set(),
