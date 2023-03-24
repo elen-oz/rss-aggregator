@@ -65,7 +65,7 @@ export default () => {
     })
     .then(() => {
       const initialState = {
-        loadingProcess: 'done',
+        loadingProcess: null,
         error: '',
         modal: {
           title: '',
@@ -140,7 +140,7 @@ export default () => {
         const postId = e.target.dataset.id;
         state.readPostIds.add(postId);
         if (e.target.dataset.bsTarget !== '#modal') return;
-        state.modal = { id: postId };
+        state.modal = postId;
       });
 
       updatePosts(state);

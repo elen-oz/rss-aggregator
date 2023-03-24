@@ -139,11 +139,14 @@ const handlePosts = (container, posts, readPostIds, i18nInstance) => {
   container.replaceChildren(postsContainer);
 };
 
-export default (elements, state, i18nInstance) => (path, value) => {
-  let title;
-  let description;
-  let link;
+const handleModal = (elements, state) => {
+  const { title, description, link } = state.posts.find(({ id }) => id === state.modal);
+  elements.modal.title.textContent = title;
+  elements.modal.body.textContent = description;
+  elements.modal.fullArticleButton.href = link;
+};
 
+export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'loadingProcess':
       handleFormState(elements, value, i18nInstance);
@@ -166,12 +169,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
 
     case 'modal':
-      ({ title, description, link } = state.posts.find(
-        ({ id }) => id === value.id,
-      ));
-      elements.modal.title.textContent = title;
-      elements.modal.body.textContent = description;
-      elements.modal.fullArticleButton.href = link;
+      handleModal(elements, state);
       break;
 
     case 'error':
