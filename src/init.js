@@ -21,10 +21,11 @@ const validateURL = (url, parsedLinks) => {
   return schema.validate(url);
 };
 
-const getRSSContent = (url) => proxifyAndRequest(url).then((response) => {
-  const responseData = response.data.contents;
-  return responseData;
-});
+const getRSSContent = (url) =>
+  proxifyAndRequest(url).then((response) => {
+    const responseData = response.data.contents;
+    return responseData;
+  });
 
 const buildPosts = (feedId, items, state) => {
   const posts = items.map((item) => ({
@@ -36,19 +37,21 @@ const buildPosts = (feedId, items, state) => {
 };
 
 const updatePosts = (state, timeout = 5000) => {
-  const promises = state.feeds.map((feed) => getRSSContent(feed.link)
-    .then(parseRSS)
-    .then((response) => {
-      const feedId = feed.id;
-      const postsUrls = state.posts
-        .filter((post) => feedId === post.feedId)
-        .map(({ link }) => link);
-      const newItems = response.items.filter(({ link }) => !postsUrls.includes(link));
+  const promises = state.feeds.map((feed) =>
+    getRSSContent(feed.link)
+      .then(parseRSS)
+      .then((response) => {
+        const feedId = feed.id;
+        const postsUrls = state.posts
+          .filter((post) => feedId === post.feedId)
+          .map(({ link }) => link);
+        const newItems = response.items.filter(({ link }) => !postsUrls.includes(link));
 
-      if (newItems.length > 0) {
-        buildPosts(feedId, newItems, state);
-      }
-    }));
+        if (newItems.length > 0) {
+          buildPosts(feedId, newItems, state);
+        }
+      })
+  );
 
   Promise.all(promises).finally(() => {
     setTimeout(() => updatePosts(state, timeout), timeout);
@@ -59,7 +62,7 @@ export default () => {
   const i18nInstance = i18next.createInstance();
   i18nInstance
     .init({
-      lng: 'ru',
+      lng: 'en',
       debug: true,
       resources,
     })
