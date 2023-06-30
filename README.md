@@ -1,28 +1,61 @@
-### Hexlet tests and linter status:
-
-<!-- [![Actions Status](https://github.com/elen-oz/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/elen-oz/frontend-project-11/actions)  -->
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/ae988a0127b618aab399/maintainability)](https://codeclimate.com/github/elen-oz/frontend-project-11/maintainability)
 
 [Link to the project](https://frontend-project-11-01.vercel.app/)
 
-# RSS - aggregator
+# RSS Aggregator
 
-[RSS](https://ru.wikipedia.org/wiki/RSS) – a specialised format designed to describe news feeds, article announcements and other content. This is the easiest way for websites (usually blogs) to allow users to subscribe for changes. Special services called RSS-aggregators are used for this purpose. These services know how to poll sites' RSS feeds for new posts and display them in a convenient way, marking what has been read and so on.
+## Description
+
+This is an RSS aggregator, a specialized tool designed to collate news feeds, article announcements, and other content. It provides an easy way for websites, typically blogs, to allow users to subscribe to updates. The aggregator polls sites' RSS feeds for new posts and displays them in a user-friendly manner, marking what has been read, and so on.
+
+This project is the third project on the Hexlet platform for the front-end development programme.
+
+## Features
+
+- Subscribe to RSS feeds from various websites
+- View a list of all posts from subscribed feeds
+- Mark posts as read
+- View a summary of each post within the aggregator
+
+## Setup and Installation
+
+To set up the project on your local machine, follow these steps:
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/elen-oz/rss-aggregator.git
+```
+
+2. Navigate into the project directory:
+
+```sh
+cd rss-aggregator
+```
+
+3. Install the required dependencies:
+
+```sh
+npm install
+```
+
+## Usage
 
 ## Installation
+
+To install the application, use the command:
 
 ```sh
 make install
 ```
 
-## Running a local server
+To run the application on a local server, use the command:
 
 ```sh
 make develop
 ```
 
-## Building the project for production
+To build the application for production, use the command:
 
 ```sh
 make build
